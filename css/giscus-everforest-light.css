@@ -10,6 +10,9 @@
   --color-canvas-default: #fdf6e3; /* bg0 */
   --color-canvas-subtle: #f4f0d9;  /* bg1 */
   --color-canvas-inset: #f4f0d9;
+  --color-canvas-overlay: #fdf6e3;
+  --color-canvas-overlay-2: #f4f0d9;
+  --color-canvas-overlay-3: #efebd4;
 
   /* Text */
   --color-fg-default: #5c6a72; /* fg */
@@ -66,6 +69,23 @@ html,
 body {
   background-color: var(--color-canvas-default) !important;
   color: var(--color-fg-default) !important;
+}
+
+/* Popovers / menus (e.g. emoji picker) */
+.Popover,
+.Popover-message,
+.Overlay,
+.Overlay-body,
+.SelectMenu,
+.SelectMenu-modal,
+.SelectMenu-list,
+.dropdown-menu,
+[role="dialog"],
+[role="menu"],
+[role="listbox"] {
+  background-color: var(--color-canvas-default) !important;
+  color: var(--color-fg-default) !important;
+  border-color: var(--color-border-default) !important;
 }
 
 /* Giscus top header (reactions / comment count / powered by) */
