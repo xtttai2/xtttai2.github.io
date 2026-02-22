@@ -66,3 +66,18 @@ body {
   background-color: var(--color-canvas-default) !important;
   color: var(--color-fg-default) !important;
 }
+
+/* Giscus top header (reactions / comment count / powered by) */
+.gsc-header,
+.gsc-left-header,
+.gsc-right-header,
+.gsc-reactions,
+.gsc-comments-count,
+.gsc-comments-count * {
+  background: transparent !important;
+}
+
+.gsc-header {
+  border-bottom-color: transparent !important;
+  box-shadow: none !important;
+}
