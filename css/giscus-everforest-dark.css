@@ -1,0 +1,68 @@
+/* Everforest theme for Giscus (Dark / Medium)
+ * Loaded by giscus.app inside an iframe.
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* Base surfaces */
+  --color-canvas-default: #2d353b; /* bg0 */
+  --color-canvas-subtle: #343f44;  /* bg1 */
+  --color-canvas-inset: #343f44;
+
+  /* Text */
+  --color-fg-default: #d3c6aa; /* fg */
+  --color-fg-muted: #859289;   /* grey1 */
+  --color-fg-subtle: #859289;
+
+  /* Borders / fills */
+  --color-border-default: #475258; /* bg3 */
+  --color-border-muted: #4f585e;   /* bg4 */
+  --color-neutral-muted: #3d484d;  /* bg2 */
+  --color-neutral-subtle: #3d484d;
+
+  /* Links / accent */
+  --color-accent-fg: #7fbbb3;       /* blue */
+  --color-accent-emphasis: #7fbbb3;
+  --color-accent-muted: rgba(127, 187, 179, 0.18);
+
+  /* Status colors (Everforest dark) */
+  --color-success-fg: #a7c080;
+  --color-attention-fg: #e69875;
+  --color-danger-fg: #e67e80;
+
+  /* Focus / shadows */
+  --color-primer-shadow-inset: transparent;
+  --color-primer-shadow-highlight: transparent;
+  --color-primer-shadow-focus: 0 0 0 3px rgba(127, 187, 179, 0.25);
+
+  /* Buttons */
+  --color-btn-text: var(--color-fg-default);
+  --color-btn-bg: #3d484d;
+  --color-btn-border: #475258;
+  --color-btn-shadow: transparent;
+  --color-btn-inset-shadow: transparent;
+  --color-btn-hover-bg: #475258;
+  --color-btn-hover-border: #4f585e;
+  --color-btn-active-bg: #4f585e;
+  --color-btn-active-border: #4f585e;
+
+  --color-btn-primary-text: #2d353b;
+  --color-btn-primary-bg: #7fbbb3;
+  --color-btn-primary-border: #7fbbb3;
+  --color-btn-primary-hover-bg: #7fbbb3;
+  --color-btn-primary-hover-border: #7fbbb3;
+  --color-btn-primary-active-bg: #7fbbb3;
+  --color-btn-primary-active-border: #7fbbb3;
+
+  /* Inputs */
+  --color-input-bg: #2d353b;
+  --color-input-border: #475258;
+  --color-input-shadow: transparent;
+}
+
+html,
+body {
+  background-color: var(--color-canvas-default) !important;
+  color: var(--color-fg-default) !important;
+}

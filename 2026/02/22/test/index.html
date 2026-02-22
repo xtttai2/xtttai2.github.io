@@ -19,23 +19,23 @@
   <meta name="author" content="xtttai2">
   <meta name="keywords" content="">
   
-    <meta name="description" content="准备  Node.js Git gihub 账号  配置 SSH   运行 ssh-keygen -t rsa -C &quot;Github 注册的邮箱地址&quot;   不停回车或肯定，直到出现一个奇怪图案。   复制 ~\.ssh\id_rsa.pub 文件里面的所有内容。   登录到 github，点击右上角头像-&gt;“Settings”-&gt;“SSH and GPG keys”">
+    <meta name="description" content="一级标题 二级标题 H3 H4 H5 H6 normal bold italic 划线 block 1234567891011121314151617181920212223#include &lt;iostream&gt;#define sq(q) (1ll * q * q)using namespace std;int a[100000];struct Node &#123;    Node(">
 <meta property="og:type" content="article">
-<meta property="og:title" content="用 hexo 搭建个人博客">
-<meta property="og:url" content="https://xtttai2.github.io/2026/02/21/%E7%94%A8%20hexo%20%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/index.html">
+<meta property="og:title" content="xtttai2&#39;s blog">
+<meta property="og:url" content="https://xtttai2.github.io/2026/02/22/test/index.html">
 <meta property="og:site_name" content="xtttai2&#39;s blog">
-<meta property="og:description" content="准备  Node.js Git gihub 账号  配置 SSH   运行 ssh-keygen -t rsa -C &quot;Github 注册的邮箱地址&quot;   不停回车或肯定，直到出现一个奇怪图案。   复制 ~\.ssh\id_rsa.pub 文件里面的所有内容。   登录到 github，点击右上角头像-&gt;“Settings”-&gt;“SSH and GPG keys”">
+<meta property="og:description" content="一级标题 二级标题 H3 H4 H5 H6 normal bold italic 划线 block 1234567891011121314151617181920212223#include &lt;iostream&gt;#define sq(q) (1ll * q * q)using namespace std;int a[100000];struct Node &#123;    Node(">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-02-21T08:19:31.832Z">
-<meta property="article:modified_time" content="2026-02-21T13:21:29.327Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/xtttai2/img/main/shapes%20at%2026-02-21%2010.29.07.png">
+<meta property="article:published_time" content="2026-02-22T01:14:24.682Z">
+<meta property="article:modified_time" content="2026-02-22T01:58:32.401Z">
 <meta property="article:author" content="xtttai2">
-<meta property="article:tag" content="hexo">
-<meta property="article:tag" content="个人博客">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/xtttai2/img/main/shapes%20at%2026-02-21%2010.29.07.png">
   
   
   
-  <title>用 hexo 搭建个人博客 - xtttai2&#39;s blog</title>
+  <title>xtttai2&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -219,7 +219,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="用 hexo 搭建个人博客"></span>
+            <span id="subtitle" data-typed-text=""></span>
           
         </div>
 
@@ -230,8 +230,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-02-21 16:19" pubdate>
-          2026年2月21日 下午
+        <time datetime="2026-02-22 09:14" pubdate>
+          2026年2月22日 上午
         </time>
       </span>
     
@@ -242,7 +242,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          454 字
+          92 字
         
       </span>
     
@@ -253,7 +253,7 @@
         
         
         
-          4 分钟
+          1 分钟
         
       </span>
     
@@ -290,109 +290,31 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">用 hexo 搭建个人博客</h1>
+            <h1 id="seo-header"></h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="准备">准备</h1>
-<ul>
-<li>Node.js</li>
-<li>Git</li>
-<li>gihub 账号</li>
-</ul>
-<h1 id="配置-ssh">配置 SSH</h1>
-<ol>
-<li>
-<p>运行 <code>ssh-keygen -t rsa -C &quot;Github 注册的邮箱地址&quot;</code></p>
-</li>
-<li>
-<p>不停回车或肯定，直到出现一个奇怪图案。</p>
-</li>
-<li>
-<p>复制 <code>~\.ssh\id_rsa.pub</code> 文件里面的所有内容。</p>
-</li>
-<li>
-<p>登录到 github，点击右上角头像-&gt;“Settings”-&gt;“SSH and GPG keys”-&gt;“New SSH key”。</p>
-</li>
-<li>
-<p>“Title” 随便写，在”Key“里粘贴你之前复制的内容。</p>
-</li>
-<li>
-<p>点击“Add SSH Key”。</p>
-</li>
-<li>
-<p>终端输入 <code>ssh -T git@github.com</code>，出现“Hi…”的信息就大功告成了。</p>
-</li>
-</ol>
-<h1 id="搭建博客环境">搭建博客环境</h1>
-<p>准备一个目录。在目录下执行</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">npm <span class="hljs-keyword">install </span>hexo-cli -g  <br>hexo init <span class="hljs-keyword">blog </span> <br>cd <span class="hljs-keyword">blog </span> <br>npm <span class="hljs-keyword">install </span> <br>hexo s<br></code></pre></td></tr></table></figure>
-<p>出现 <code>localhost:4000</code> 就表示成功了。浏览器打开此网址，即可预览自己的博客，默认有一个 Hello World。<code>Ctrl+C</code> 停止本地博客。</p>
-<h1 id="部署">部署</h1>
-<h2 id="创建-github-仓库">创建 github 仓库</h2>
-<ol>
-<li>
-<p>进入 github，点击右上角“+”-&gt;“New repository”。</p>
-</li>
-<li>
-<p>“Repository name”写 <code>你的用户名.github.io</code>。</p>
-</li>
-<li>
-<p>“Add README”选择“On”。</p>
-</li>
-<li>
-<p>其他选项不用改，点击“Create repository”。</p>
-</li>
-</ol>
-<h2 id="部署网站">部署网站</h2>
-<p>打开刚刚创建的仓库，点击右上方绿色的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mpadded width="+6pt" height="+6pt" lspace="3pt" voffset="3pt" mathbackground="green"><mstyle mathcolor="white"><mtext>&lt;&gt; Code</mtext></mstyle></mpadded></mrow><annotation encoding="application/x-tex">\colorbox{green}{\textcolor{white}{&lt;&gt; Code}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.3335em;vertical-align:-0.3391em;"></span><span class="mord"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9944em;"><span style="top:-2.9944em;"><span class="pstrut" style="height:3.3335em;"></span><span class="stretchy colorbox" style="height:1.3335em;background-color:green;"></span></span><span style="top:-3.3335em;"><span class="pstrut" style="height:3.3335em;"></span><span class="mord boxpad"><span class="mord" style="color:white;">&lt;&gt; Code</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3391em;"><span></span></span></span></span></span></span></span></span> 按钮，“Clone”处选择“SSH”，复制下方的地址。</p>
-<p>接着进入博客目录，打开 <code>_config.yml</code>，翻到最底下，把 <code>deploy</code> 一段改成</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">deploy:</span>  <br>  <span class="hljs-attr">type:</span> <span class="hljs-string">git</span>  <br>  <span class="hljs-attr">repository:</span> <span class="hljs-string">粘贴你刚刚复制的地址（如</span> <span class="hljs-string">git@github.com:xtttai2/xtttai2.github.io.git）</span>  <br>  <span class="hljs-attr">branch:</span> <span class="hljs-string">main</span><br></code></pre></td></tr></table></figure>
-<p>然后在目录下运行</p>
-<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ada">npm install hexo-deployer-git <span class="hljs-comment">--save</span><br></code></pre></td></tr></table></figure>
-<p>最后运行</p>
-<figure class="highlight sas"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sas">hexo cl <span class="hljs-variable">&amp;&amp;</span> hexo g <span class="hljs-variable">&amp;&amp;</span> hexo d<br></code></pre></td></tr></table></figure>
-<p>此时再去仓库看看就会发现除了 <code>README.md</code> 还多出了许多东西。</p>
-<p>等待几分钟，访问 <code>你的用户名.github.io</code>，就可以看到你的博客了（默认只有一个 Hello World）。</p>
-<h1 id="基本操作">基本操作</h1>
-<h2 id="新建文章">新建文章</h2>
-<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">hexo <span class="hljs-built_in">new</span> <span class="hljs-built_in">post</span> <span class="hljs-string">&quot;文章标题&quot;</span><br></code></pre></td></tr></table></figure>
-<h2 id="Front-matter">Front-matter</h2>
-<p>开头的代码块，支持 YAML 与 JSON 格式。比如</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-meta">---  </span><br><span class="hljs-attr">title:</span> <span class="hljs-string">Hello</span> <span class="hljs-string">World</span>  <br><span class="hljs-attr">date:</span> <span class="hljs-number">2013</span><span class="hljs-string">/7/13</span> <span class="hljs-number">20</span><span class="hljs-string">:46:25</span>  <br><span class="hljs-meta">---</span><br></code></pre></td></tr></table></figure>
-<p>常用设置见下表：</p>
-<table>
-<thead>
-<tr>
-<th>设置</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>title</td>
-<td>标题</td>
-</tr>
-<tr>
-<td>date</td>
-<td>建立日期</td>
-</tr>
-<tr>
-<td>updated</td>
-<td>更新日期</td>
-</tr>
-<tr>
-<td>tags</td>
-<td>标签</td>
-</tr>
-<tr>
-<td>categories</td>
-<td>类别</td>
-</tr>
-</tbody>
-</table>
-<p>剩下的可以自己玩了。</p>
+                <h1 id="一级标题">一级标题</h1>
+<h2 id="二级标题">二级标题</h2>
+<h3 id="H3">H3</h3>
+<h4 id="H4">H4</h4>
+<h5 id="H5">H5</h5>
+<h6 id="H6">H6</h6>
+<p>normal</p>
+<p><strong>bold</strong></p>
+<p><em>italic</em></p>
+<p><s>划线</s></p>
+<h1 id="block">block</h1>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> sq(q) (1ll * q * q)</span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-type">int</span> a[<span class="hljs-number">100000</span>];<br><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Node</span> &#123;<br>    <span class="hljs-built_in">Node</span>() &#123;&#125;<br>&#125;;<br><br>Node node;<br>pair&lt;<span class="hljs-type">int</span>, <span class="hljs-type">int</span>&gt; pii;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">f</span><span class="hljs-params">()</span> </span>&#123; <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>; &#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>  <span class="hljs-type">int</span> n;<br>  cin &gt;&gt; n;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt;= n; i++)<br>    cin &gt;&gt; a[i];<br>  cout &lt;&lt; <span class="hljs-built_in">f</span>() &lt;&lt; <span class="hljs-string">&#x27;\n&#x27;</span> &lt;&lt; <span class="hljs-string">&quot;string&quot;</span>;<br>  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h1 id="图片。">图片。</h1>
+<p><img src="https://raw.githubusercontent.com/xtttai2/img/main/shapes%20at%2026-02-21%2010.29.07.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h1 id="公式">公式</h1>
+<h2 id="行间">行间</h2>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><munder><mo>∑</mo><mi>i</mi></munder><mo>∏</mo><msub><mi>a</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\sum_{i} \prod a_j
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.3277em;vertical-align:-1.2777em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-symbol large-op" style="position:relative;top:0em;">∏</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<h2 id="内联">内联</h2>
+<p>这是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span>。</p>
 
                 
               </div>
@@ -401,36 +323,6 @@
             <div>
               <div class="post-metas my-3">
   
-    <div class="post-meta mr-3 d-flex align-items-center">
-      <i class="iconfont icon-category"></i>
-      
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E7%A7%91%E6%8A%80%C2%B7%E5%B7%A5%E7%A8%8B/" class="category-chain-item">科技·工程</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-    </div>
-  
-  
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" class="print-no-link">#个人博客</a>
-      
-        <a href="/tags/hexo/" class="print-no-link">#hexo</a>
-      
-    </div>
   
 </div>
 
@@ -440,8 +332,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>用 hexo 搭建个人博客</div>
-      <div>https://xtttai2.github.io/2026/02/21/用 hexo 搭建个人博客/</div>
+      <div></div>
+      <div>https://xtttai2.github.io/2026/02/22/test/</div>
     </div>
     <div class="license-meta">
       
@@ -453,7 +345,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2026年2月21日</div>
+          <div>2026年2月22日</div>
         </div>
       
       
@@ -485,15 +377,15 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/02/22/test/" title="">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile"></span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
+                    
+                      <a href="/2026/02/21/%E7%94%A8%20hexo%20%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" title="用 hexo 搭建个人博客">
+                        <span class="hidden-mobile">用 hexo 搭建个人博客</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
                     
                   </article>
                 </div>
