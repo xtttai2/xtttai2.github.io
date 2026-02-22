@@ -738,7 +738,7 @@ figure img,
   width: 1em;
   height: 1em;
   line-height: 1;
-  vertical-align: -0.15em;
+  vertical-align: -0.14em;
   background-color: currentColor;
   -webkit-mask: url("/img/luogu.svg") no-repeat center / contain;
   mask: url("/img/luogu.svg") no-repeat center / contain;
