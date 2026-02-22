@@ -48,8 +48,9 @@
   --color-btn-inset-shadow: transparent;
   --color-btn-hover-bg: #e6e2cc;
   --color-btn-hover-border: #e0dcc7;
-  --color-btn-active-bg: #e0dcc7;
-  --color-btn-active-border: #bdc3af;
+  /* Keep click (active) state identical to default */
+  --color-btn-active-bg: var(--color-btn-bg);
+  --color-btn-active-border: var(--color-btn-border);
 
   --color-btn-primary-text: #fdf6e3;
   --color-btn-primary-bg: #A7C080;
@@ -124,26 +125,6 @@ body {
   color: var(--color-btn-primary-text) !important;
   border: 0 !important;
   box-shadow: none !important;
-}
-
-/* Buttons active (mouse down) state only: green border + deeper background + normal text */
-.gsc-header button:active,
-.gsc-header a:active,
-.gsc-comment-box button:active,
-.gsc-comment-box a:active {
-  background-color: var(--color-canvas-subtle) !important;
-  color: var(--color-fg-default) !important;
-  border-color: var(--color-accent-fg) !important;
-  box-shadow: none !important;
-  outline: none !important;
-}
-
-/* Ensure submit button also shows green border when clicked */
-.gsc-comment-box button[type="submit"]:active,
-.gsc-comment-box input[type="submit"]:active {
-  border: 1px solid var(--color-accent-fg) !important;
-  background-color: var(--color-canvas-subtle) !important;
-  color: var(--color-fg-default) !important;
 }
 
 /* Giscus top header (reactions / comment count / powered by) */
