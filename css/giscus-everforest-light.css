@@ -75,10 +75,10 @@ body {
 .gsc-reactions,
 .gsc-comments-count,
 .gsc-comments-count * {
-  background: transparent !important;
+  background-color: var(--color-canvas-default) !important;
 }
 
 .gsc-header {
-  border-bottom-color: transparent !important;
+  border-bottom-color: var(--color-border-muted) !important;
   box-shadow: none !important;
 }
