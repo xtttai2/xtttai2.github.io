@@ -53,11 +53,13 @@
 
   --color-btn-primary-text: #fdf6e3;
   --color-btn-primary-bg: #A7C080;
-  --color-btn-primary-border: #A7C080;
+  --color-btn-primary-border: transparent;
   --color-btn-primary-hover-bg: #A7C080;
-  --color-btn-primary-hover-border: #A7C080;
+  --color-btn-primary-hover-border: transparent;
   --color-btn-primary-active-bg: #A7C080;
-  --color-btn-primary-active-border: #A7C080;
+  --color-btn-primary-active-border: transparent;
+  --color-btn-primary-shadow: transparent;
+  --color-btn-primary-inset-shadow: transparent;
 
   /* Inputs */
   --color-input-bg: #fdf6e3;
@@ -86,6 +88,23 @@ body {
   background-color: var(--color-canvas-default) !important;
   color: var(--color-fg-default) !important;
   border-color: var(--color-border-default) !important;
+}
+
+/* Primary button ("评论"/Comment) should be green and borderless */
+.btn-primary,
+.Button--primary {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.Button--primary:hover,
+.Button--primary:focus,
+.Button--primary:active {
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 
 /* Giscus top header (reactions / comment count / powered by) */
