@@ -106,6 +106,29 @@ body {
   box-shadow: none !important;
 }
 
+/* Comment submit button: green background + no border */
+.gsc-comment-box button[type="submit"],
+.gsc-comment-box input[type="submit"],
+.gsc-comment-box .btn-primary[type="submit"],
+.gsc-comment-box .Button--primary[type="submit"] {
+  background-color: var(--color-btn-primary-bg) !important;
+  color: var(--color-btn-primary-text) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.gsc-comment-box button[type="submit"]:hover,
+.gsc-comment-box button[type="submit"]:focus,
+.gsc-comment-box button[type="submit"]:active,
+.gsc-comment-box input[type="submit"]:hover,
+.gsc-comment-box input[type="submit"]:focus,
+.gsc-comment-box input[type="submit"]:active {
+  background-color: var(--color-btn-primary-hover-bg) !important;
+  color: var(--color-btn-primary-text) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
 /* Giscus top header (reactions / comment count / powered by) */
 .gsc-header,
 .gsc-left-header,
