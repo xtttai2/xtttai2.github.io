@@ -549,61 +549,61 @@ figure img,
 /* Auto light mode (no user override) */
 @media (prefers-color-scheme: light) {
   :root:not([data-user-color-scheme]) #nprogress .bar {
-    background: #3a94c5 !important;
+    background: var(--link-hover-color) !important;
   }
 
   :root:not([data-user-color-scheme]) #nprogress .peg {
-    box-shadow: 0 0 10px #3a94c5, 0 0 5px #3a94c5 !important;
+    box-shadow: 0 0 10px var(--link-hover-color), 0 0 5px var(--link-hover-color) !important;
   }
 
   :root:not([data-user-color-scheme]) #nprogress .spinner-icon {
-    border-top-color: #3a94c5 !important;
-    border-left-color: #3a94c5 !important;
+    border-top-color: var(--link-hover-color) !important;
+    border-left-color: var(--link-hover-color) !important;
   }
 }
 
 /* Explicit light mode */
 [data-user-color-scheme="light"] #nprogress .bar {
-  background: #3a94c5 !important;
+  background: var(--link-hover-color) !important;
 }
 
 [data-user-color-scheme="light"] #nprogress .peg {
-  box-shadow: 0 0 10px #3a94c5, 0 0 5px #3a94c5 !important;
+  box-shadow: 0 0 10px var(--link-hover-color), 0 0 5px var(--link-hover-color) !important;
 }
 
 [data-user-color-scheme="light"] #nprogress .spinner-icon {
-  border-top-color: #3a94c5 !important;
-  border-left-color: #3a94c5 !important;
+  border-top-color: var(--link-hover-color) !important;
+  border-left-color: var(--link-hover-color) !important;
 }
 
 /* Auto dark mode (no user override) */
 @media (prefers-color-scheme: dark) {
   :root:not([data-user-color-scheme]) #nprogress .bar {
-    background: #7fbbb3 !important;
+    background: var(--link-hover-color) !important;
   }
 
   :root:not([data-user-color-scheme]) #nprogress .peg {
-    box-shadow: 0 0 10px #7fbbb3, 0 0 5px #7fbbb3 !important;
+    box-shadow: 0 0 10px var(--link-hover-color), 0 0 5px var(--link-hover-color) !important;
   }
 
   :root:not([data-user-color-scheme]) #nprogress .spinner-icon {
-    border-top-color: #7fbbb3 !important;
-    border-left-color: #7fbbb3 !important;
+    border-top-color: var(--link-hover-color) !important;
+    border-left-color: var(--link-hover-color) !important;
   }
 }
 
 /* Explicit dark mode */
 [data-user-color-scheme="dark"] #nprogress .bar {
-  background: #7fbbb3 !important;
+  background: var(--link-hover-color) !important;
 }
 
 [data-user-color-scheme="dark"] #nprogress .peg {
-  box-shadow: 0 0 10px #7fbbb3, 0 0 5px #7fbbb3 !important;
+  box-shadow: 0 0 10px var(--link-hover-color), 0 0 5px var(--link-hover-color) !important;
 }
 
 [data-user-color-scheme="dark"] #nprogress .spinner-icon {
-  border-top-color: #7fbbb3 !important;
-  border-left-color: #7fbbb3 !important;
+  border-top-color: var(--link-hover-color) !important;
+  border-left-color: var(--link-hover-color) !important;
 }
 
 /* ============================

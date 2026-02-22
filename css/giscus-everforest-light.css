@@ -23,9 +23,9 @@
   --color-neutral-subtle: #efebd4;
 
   /* Links / accent */
-  --color-accent-fg: #3a94c5;       /* blue */
-  --color-accent-emphasis: #3a94c5;
-  --color-accent-muted: rgba(58, 148, 197, 0.18);
+  --color-accent-fg: #A7C080;
+  --color-accent-emphasis: #A7C080;
+  --color-accent-muted: rgba(167, 192, 128, 0.18);
 
   /* Status colors (Everforest light) */
   --color-success-fg: #8da101;
@@ -35,7 +35,7 @@
   /* Focus / shadows */
   --color-primer-shadow-inset: transparent;
   --color-primer-shadow-highlight: transparent;
-  --color-primer-shadow-focus: 0 0 0 3px rgba(58, 148, 197, 0.25);
+  --color-primer-shadow-focus: 0 0 0 3px rgba(167, 192, 128, 0.25);
 
   /* Buttons */
   --color-btn-text: var(--color-fg-default);
@@ -49,12 +49,12 @@
   --color-btn-active-border: #bdc3af;
 
   --color-btn-primary-text: #fdf6e3;
-  --color-btn-primary-bg: #3a94c5;
-  --color-btn-primary-border: #3a94c5;
-  --color-btn-primary-hover-bg: #3a94c5;
-  --color-btn-primary-hover-border: #3a94c5;
-  --color-btn-primary-active-bg: #3a94c5;
-  --color-btn-primary-active-border: #3a94c5;
+  --color-btn-primary-bg: #A7C080;
+  --color-btn-primary-border: #A7C080;
+  --color-btn-primary-hover-bg: #A7C080;
+  --color-btn-primary-hover-border: #A7C080;
+  --color-btn-primary-active-bg: #A7C080;
+  --color-btn-primary-active-border: #A7C080;
 
   /* Inputs */
   --color-input-bg: #fdf6e3;
