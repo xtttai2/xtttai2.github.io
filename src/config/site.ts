@@ -1,6 +1,6 @@
 export const siteConfig = {
   title: 'xtttai2',
-  description: '一个轻量的个人博客，用来记录算法、工程和慢速写作。',
+  description: "xtttai2's blog",
   author: 'xtttai2',
   welcomeMessage: "Welcome to xtttai2's blog!",
   socialLinks: [
