@@ -1,0 +1,42 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../lib/format';
+import { getCategorySlug, getPostSummary } from '../lib/posts';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+  variant?: 'default' | 'home';
+}
+
+const { post, variant = 'default' } = Astro.props;
+const postUrl = `/posts/${post.id}/`;
+const categoryUrl = `/categories/${getCategorySlug(post.data.category)}/`;
+const isHome = variant === 'home';
+const homeDate = post.data.updated ?? post.data.date;
+const homeDateLabel = post.data.updated ? '更新于' : '发布于';
+const summary = getPostSummary(post);
+---
+
+<article class:list={['post-card', isHome && 'post-card-home']}>
+  <div class="post-card-heading">
+    <h3 class="post-card-title">
+      <a href={postUrl}>{post.data.title}</a>
+    </h3>
+    <div class="post-card-meta">
+      <a class="category-label post-card-category" href={categoryUrl}>{post.data.category}</a>
+      {
+        isHome ? (
+          <span>
+            {homeDateLabel} {formatDate(homeDate)}
+          </span>
+        ) : (
+          <>
+            <span>发布于 {formatDate(post.data.date)}</span>
+            {post.data.updated && <span>更新于 {formatDate(post.data.updated)}</span>}
+          </>
+        )
+      }
+    </div>
+  </div>
+  <p class="post-card-description">{summary}</p>
+</article>

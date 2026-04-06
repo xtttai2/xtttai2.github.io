@@ -1,0 +1,46 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GiscusComments from '../../components/GiscusComments.astro';
+import PostToc from '../../components/PostToc.astro';
+import { formatDate } from '../../lib/format';
+import { getAllPosts, getCategorySlug, getPostSummary } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
+
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post }
+  }));
+}
+
+const { post } = Astro.props as { post: CollectionEntry<'posts'> };
+const { Content, headings } = await render(post);
+const categoryUrl = `/categories/${getCategorySlug(post.data.category)}/`;
+const metaDate = post.data.updated ?? post.data.date;
+const metaLabel = post.data.updated ? '更新于' : '发布于';
+const metaDescription = getPostSummary(post);
+---
+
+<BaseLayout title={post.data.title} description={metaDescription}>
+  <div class="article-layout">
+    <article class="article-card">
+      <header class="article-header">
+        <div class="article-header-top">
+          <h1 class="article-title-block">{post.data.title}</h1>
+          <div class="article-inline-meta">
+            <a class="category-label" href={categoryUrl}>{post.data.category}</a>
+            <span>{metaLabel} {formatDate(metaDate)}</span>
+          </div>
+        </div>
+        {post.data.description && <p class="article-description">{post.data.description}</p>}
+      </header>
+      <PostToc headings={headings} />
+      <section class="prose">
+        <Content />
+      </section>
+      <GiscusComments />
+    </article>
+  </div>
+</BaseLayout>

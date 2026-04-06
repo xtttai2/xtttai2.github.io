@@ -1,0 +1,228 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+interface TocItem {
+  id: string;
+  text: string;
+  depth: number;
+  parentId: string | null;
+  children: string[];
+}
+
+const { headings } = Astro.props;
+const items: TocItem[] = [];
+const stack: TocItem[] = [];
+
+for (const heading of headings.filter((entry) => entry.depth >= 1 && entry.depth <= 6)) {
+  const item: TocItem = {
+    id: heading.slug,
+    text: heading.text,
+    depth: heading.depth,
+    parentId: null,
+    children: []
+  };
+
+  while (stack.length > 0 && stack[stack.length - 1].depth >= item.depth) {
+    stack.pop();
+  }
+
+  const parent = stack[stack.length - 1];
+  if (parent) {
+    item.parentId = parent.id;
+    parent.children.push(item.id);
+  }
+
+  items.push(item);
+  stack.push(item);
+}
+
+const itemById = new Map(items.map((item) => [item.id, item]));
+const rootIds = items.filter((item) => item.parentId === null).map((item) => item.id);
+const initialItems = rootIds
+  .map((id) => itemById.get(id))
+  .filter((item): item is TocItem => Boolean(item));
+---
+
+<>
+  <div class="article-toc-slot" data-article-toc-slot>
+    <aside class="toc-card" aria-label="文章目录">
+      <p class="panel-kicker">目录</p>
+      <ul class="toc-list" data-toc-list>
+        {initialItems.map((item) => (
+          <li class="toc-item" style={`--toc-depth: ${item.depth};`}>
+            <a class="toc-link" data-toc-link href={`#${item.id}`}>{item.text}</a>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  </div>
+  <details class="toc-mobile">
+    <summary>查看目录</summary>
+      <ul class="toc-list" data-toc-list>
+        {initialItems.map((item) => (
+          <li class="toc-item" style={`--toc-depth: ${item.depth};`}>
+            <a class="toc-link" data-toc-link href={`#${item.id}`}>{item.text}</a>
+          </li>
+        ))}
+    </ul>
+  </details>
+</>
+
+<script is:inline define:vars={{ tocItems: items, tocRootIds: rootIds }}>
+  const initPostToc = () => {
+    const tocSlot = document.querySelector('[data-article-toc-slot]');
+    const tocLists = [...document.querySelectorAll('[data-toc-list]')];
+    const items = Array.isArray(tocItems) ? tocItems : [];
+    const rootIds = Array.isArray(tocRootIds) ? tocRootIds : [];
+    const itemsById = new Map(items.map((item) => [item.id, item]));
+    const headingElements = items
+      .map((item) => {
+        const element = document.getElementById(item.id);
+        return element ? { id: item.id, element } : null;
+      })
+      .filter(Boolean);
+
+    const renderTocItems = (visibleIds, activeId) => {
+      for (const list of tocLists) {
+        const nodes = visibleIds
+          .map((id) => {
+            const item = itemsById.get(id);
+            if (!item) return null;
+
+            const li = document.createElement('li');
+            li.className = 'toc-item';
+            li.style.setProperty('--toc-depth', `${item.depth}`);
+
+            const link = document.createElement('a');
+            link.className = 'toc-link';
+            link.dataset.tocLink = '';
+            link.href = `#${encodeURIComponent(item.id)}`;
+            link.textContent = item.text;
+
+            if (id === activeId) {
+              link.classList.add('is-active');
+            }
+
+            li.append(link);
+            return li;
+          })
+          .filter(Boolean);
+
+        list.replaceChildren(...nodes);
+      }
+    };
+
+    const getActivePath = (activeId) => {
+      const path = new Set();
+      let currentItem = activeId ? (itemsById.get(activeId) ?? null) : null;
+
+      while (currentItem) {
+        path.add(currentItem.id);
+        currentItem = currentItem.parentId ? (itemsById.get(currentItem.parentId) ?? null) : null;
+      }
+
+      return path;
+    };
+
+    const collectVisibleIds = (id, activePath, bucket) => {
+      const item = itemsById.get(id);
+      if (!item) return;
+
+      bucket.push(id);
+
+      if (!activePath.has(id)) {
+        return;
+      }
+
+      for (const childId of item.children) {
+        collectVisibleIds(childId, activePath, bucket);
+      }
+    };
+
+    const getVisibleIds = (activeId) => {
+      const activePath = getActivePath(activeId);
+      const visibleIds = [];
+
+      for (const rootId of rootIds) {
+        collectVisibleIds(rootId, activePath, visibleIds);
+      }
+
+      return visibleIds;
+    };
+
+    const syncTocOffset = () => {
+      if (!tocSlot) return;
+      const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+      const restingTop = 6 * rootFontSize;
+      const pinnedTop = 1.5 * rootFontSize;
+      const progress = Math.min(window.scrollY / (5 * rootFontSize), 1);
+      const currentTop = restingTop - (restingTop - pinnedTop) * progress;
+      tocSlot.style.setProperty('--toc-offset-top', `${currentTop}px`);
+    };
+
+    let renderedVisibleKey = rootIds.join('|');
+    let renderedActiveId = null;
+
+    const syncVisibleToc = (activeId) => {
+      const visibleIds = getVisibleIds(activeId);
+      const visibleKey = visibleIds.join('|');
+
+      if (visibleKey === renderedVisibleKey && activeId === renderedActiveId) {
+        return;
+      }
+
+      renderTocItems(visibleIds, activeId);
+      renderedVisibleKey = visibleKey;
+      renderedActiveId = activeId;
+    };
+
+    const syncActiveHeading = () => {
+      if (headingElements.length === 0) {
+        syncVisibleToc(null);
+        return;
+      }
+
+      const trigger = window.innerWidth <= 1280 ? 120 : 180;
+      let activeId = null;
+
+      for (const heading of headingElements) {
+        if (heading.element.getBoundingClientRect().top <= trigger) {
+          activeId = heading.id;
+        } else {
+          break;
+        }
+      }
+
+      syncVisibleToc(activeId);
+    };
+
+    const syncTocState = () => {
+      syncTocOffset();
+      syncActiveHeading();
+    };
+
+    let ticking = false;
+    const scheduleSync = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        syncTocState();
+        ticking = false;
+      });
+    };
+
+    syncTocState();
+    window.addEventListener('scroll', scheduleSync, { passive: true });
+    window.addEventListener('resize', scheduleSync, { passive: true });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPostToc, { once: true });
+  } else {
+    initPostToc();
+  }
+</script>

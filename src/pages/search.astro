@@ -1,0 +1,139 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchForm from '../components/SearchForm.astro';
+
+const query = Astro.url.searchParams.get('q') ?? '';
+---
+
+<BaseLayout title="搜索文章" description="搜索博客里的标题和正文内容。">
+  <section class="search-page">
+    <article class="panel">
+      <SearchForm initialValue={query} />
+    </article>
+
+    <div id="search-status" class="search-status"></div>
+    <div id="search-results" class="search-results"></div>
+  </section>
+
+  <script is:inline type="module" define:vars={{ initialQuery: query }}>
+    const form = document.querySelector('[data-search-form]');
+    const input = document.querySelector('[data-search-input]');
+    const status = document.querySelector('#search-status');
+    const results = document.querySelector('#search-results');
+    let indexPromise;
+    let debounceTimer;
+
+    const escapeHtml = (value = '') =>
+      value.replace(/[&<>"']/g, (char) => {
+        const map = {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        };
+        return map[char];
+      });
+
+    const formatDate = (value) => value ? value.slice(0, 10) : '';
+
+    const loadIndex = async () => {
+      if (!indexPromise) {
+        indexPromise = fetch('/search-index.json').then((response) => response.json());
+      }
+      return indexPromise;
+    };
+
+    const updateUrl = (term, push = false) => {
+      const params = new URLSearchParams(window.location.search);
+      if (term.trim()) {
+        params.set('q', term.trim());
+      } else {
+        params.delete('q');
+      }
+
+      const nextUrl = `${window.location.pathname}${params.toString() ? `?${params}` : ''}`;
+      const method = push ? 'pushState' : 'replaceState';
+      window.history[method]({}, '', nextUrl);
+    };
+
+    const renderMatches = (matches, term) => {
+      if (!status || !results) {
+        return;
+      }
+
+      if (!term.trim()) {
+        status.textContent = '';
+        results.innerHTML = '';
+        return;
+      }
+
+      if (matches.length === 0) {
+        status.textContent = `没有找到和“${term}”相关的文章。`;
+        results.innerHTML = '';
+        return;
+      }
+
+      status.textContent = `共找到 ${matches.length} 篇相关文章。`;
+      results.innerHTML = matches
+        .map(
+          (item) => `
+            <article class="post-card search-result">
+              <div class="post-card-heading">
+                <h3 class="post-card-title"><a href="${escapeHtml(item.url)}">${escapeHtml(item.title)}</a></h3>
+                <div class="search-result-meta">
+                  <a class="category-label" href="/categories/${escapeHtml(item.categorySlug)}/">${escapeHtml(item.category)}</a>
+                  <span>发布于 ${formatDate(item.date)}</span>
+                  ${item.updated ? `<span>更新于 ${formatDate(item.updated)}</span>` : ''}
+                </div>
+              </div>
+              <p class="muted">${escapeHtml(item.description)}</p>
+            </article>
+          `
+        )
+        .join('');
+    };
+
+    const search = async (term) => {
+      const normalized = term.trim().toLowerCase();
+      const index = await loadIndex();
+
+      if (!normalized) {
+        renderMatches([], term);
+        return;
+      }
+
+      const matches = index
+        .map((item) => {
+          let score = 0;
+          if (item.title.toLowerCase().includes(normalized)) score += 5;
+          if (item.description.toLowerCase().includes(normalized)) score += 2;
+          if (item.content.toLowerCase().includes(normalized)) score += 1;
+          return { item, score };
+        })
+        .filter((entry) => entry.score > 0)
+        .sort((left, right) => right.score - left.score || right.item.date.localeCompare(left.item.date))
+        .map((entry) => entry.item);
+
+      renderMatches(matches, term);
+    };
+
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const term = input instanceof HTMLInputElement ? input.value : '';
+      updateUrl(term, true);
+      await search(term);
+    });
+
+    input?.addEventListener('input', () => {
+      const term = input instanceof HTMLInputElement ? input.value : '';
+      window.clearTimeout(debounceTimer);
+      debounceTimer = window.setTimeout(async () => {
+        updateUrl(term);
+        await search(term);
+      }, 120);
+    });
+
+    search(initialQuery);
+  </script>
+</BaseLayout>

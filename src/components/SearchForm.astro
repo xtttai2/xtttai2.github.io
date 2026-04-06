@@ -1,0 +1,27 @@
+---
+interface Props {
+  initialValue?: string;
+  compact?: boolean;
+}
+
+const { initialValue = '', compact = false } = Astro.props;
+---
+
+<form
+  class:list={['search-form', compact && 'search-form-compact']}
+  action="/search"
+  method="get"
+  data-search-form
+>
+  <label class="sr-only" for="search-input">搜索文章</label>
+  <input
+    id="search-input"
+    name="q"
+    type="search"
+    value={initialValue}
+    placeholder="搜索标题或正文内容"
+    autocomplete="off"
+    data-search-input
+  />
+  <button type="submit">搜索</button>
+</form>

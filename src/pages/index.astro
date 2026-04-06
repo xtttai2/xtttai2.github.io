@@ -1,17 +1,49 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { siteConfig } from '../config/site';
+import { getAllPosts } from '../lib/posts';
 
+const posts = await getAllPosts();
+const recentPosts = posts.slice(0, 6);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title={siteConfig.title} description={siteConfig.description}>
+  <section class="home-welcome" aria-label="欢迎">
+    <h1 aria-label={siteConfig.welcomeMessage}>
+      <span class="typewriter-text" data-full-text={siteConfig.welcomeMessage}>
+        {siteConfig.welcomeMessage}
+      </span>
+    </h1>
+  </section>
+
+  <section class="home-sections">
+    <div class="panel">
+      <div class="post-list">
+        {recentPosts.map((post) => <PostCard post={post} variant="home" />)}
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    const typewriter = document.querySelector('.typewriter-text');
+
+    if (typewriter instanceof HTMLElement) {
+      const fullText = typewriter.dataset.fullText ?? '';
+      let index = 0;
+
+      typewriter.textContent = '';
+
+      const tick = () => {
+        index += 1;
+        typewriter.textContent = fullText.slice(0, index);
+
+        if (index < fullText.length) {
+          window.setTimeout(tick, 90);
+        }
+      };
+
+      window.setTimeout(tick, 280);
+    }
+  </script>
+</BaseLayout>

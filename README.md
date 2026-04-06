@@ -1,43 +1,89 @@
-# Astro Starter Kit: Minimal
+# xtttai2.github.io
 
-```sh
-npm create astro@latest -- --template minimal
+一个基于 **Astro** 的极简个人博客，目标是：
+
+- 以 Markdown 为核心发布文章
+- 支持 KaTeX 公式、图片、代码块
+- 支持标题与正文全文搜索
+- 支持单一类别归档
+- 显示发布日期 / 更新日期
+- 文章页右侧目录
+- 接入 Giscus 评论
+- 部署到 GitHub Pages
+
+## 本地开发
+
+```bash
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+默认地址是 `http://localhost:4321`。
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
+## 关键目录
 
 ```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+src/
+├── components/      # 搜索框、目录、评论等组件
+├── config/          # 站点与 Giscus 配置
+├── content/posts/   # Markdown 文章
+├── layouts/         # 全局布局
+├── lib/             # 文章与日期工具函数
+├── pages/           # 首页、搜索、类别页、文章页、搜索索引
+└── styles/          # 全局样式
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 写文章
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+文章放在 `src/content/posts/`，frontmatter 结构如下：
 
-Any static assets, like images, can be placed in the `public/` directory.
+```yaml
+---
+title: 文章标题
+description: 文章简介 # 可选
+date: 2026-04-05
+updated: 2026-04-06 # 可选
+category: 建站
+draft: false        # 可选
+---
+```
 
-## 🧞 Commands
+首页会按 `date` 倒序展示最近文章；如果填了 `updated`，文章页和列表页都会显示更新日期。`description` 不填时，文章页不会显示摘要，列表页和搜索结果会自动截取正文开头作为摘要。
 
-All commands are run from the root of the project, from a terminal:
+## 搜索实现
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+搜索使用静态生成的 `/search-index.json`，前端加载后匹配：
 
-## 👀 Want to learn more?
+- 标题
+- description
+- 正文内容
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+适合文章量不大的个人博客，不依赖外部搜索服务。
+
+## Giscus 配置
+
+编辑 `src/config/site.ts`：
+
+```ts
+giscus: {
+  enabled: true,
+  repo: 'xtttai2/xtttai2.github.io',
+  repoId: '',
+  category: 'Comments',
+  categoryId: '',
+  // ...
+}
+```
+
+其中 `repoId` 和 `categoryId` 需要到 Giscus 配置页面生成后填入；未填时页面会保留一个清晰的占位提示。
+
+## 构建与检查
+
+```bash
+npm run check
+npm run build
+```
+
+## 部署
+
+仓库已包含 `.github/workflows/deploy.yml`，推送到 `main` 后即可通过 GitHub Pages 工作流发布。
