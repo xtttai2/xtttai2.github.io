@@ -11,7 +11,8 @@ interface Props {
 const { title = siteConfig.title, description = siteConfig.description } = Astro.props;
 const pageTitle = title === siteConfig.title ? title : `${title} · ${siteConfig.title}`;
 const pathname = Astro.url.pathname;
-const collapsibleHeader = pathname.startsWith('/posts/');
+const isArticlePage = pathname.startsWith('/posts/');
+const collapsibleHeader = isArticlePage;
 ---
 
 <html lang="zh-CN">
@@ -40,12 +41,7 @@ const collapsibleHeader = pathname.startsWith('/posts/');
       <main class="page-main">
         <slot />
       </main>
-      <footer class="site-footer">
-        <p>Markdown / KaTeX / Astro 静态生成。</p>
-        <p>
-          评论由 Giscus 提供，部署目标为 <code>xtttai2.github.io</code>。
-        </p>
-      </footer>
+      <footer class:list={['site-footer', isArticlePage && 'site-footer--article']}>--EOF--</footer>
     </div>
 
     {

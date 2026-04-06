@@ -46,6 +46,9 @@ const paperCodeTheme = {
 export default defineConfig({
   site: 'https://xtttai2.github.io',
   output: 'static',
+  devToolbar: {
+    enabled: false
+  },
   markdown: {
     remarkPlugins: [remarkMath],
     rehypePlugins: [rehypeKatex],

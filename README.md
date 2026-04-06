@@ -10,12 +10,12 @@
 
 ```yaml
 ---
-  title: title
-  description: description # optional
-  date: 2026-04-06
-  updated: 2026-04-06 # optional
-  category: category
-  ---
+title: title
+description: description # optional
+date: 2026-04-06
+updated: 2026-04-06 # optional
+category: category
+---
 ```
 
 ## 预览
@@ -23,8 +23,6 @@
 ```
 npm run dev
 ```
-
-地址为 [http://localhost:4321](http://localhost:4321)。
 
 ## 发布
 
