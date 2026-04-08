@@ -3,7 +3,7 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 export type PostEntry = CollectionEntry<'posts'>;
 const DEFAULT_SUMMARY_LENGTH = 120;
 
-export interface CategoryArchive {
+export interface TagArchive {
   name: string;
   slug: string;
   posts: PostEntry[];
@@ -16,32 +16,38 @@ export async function getAllPosts() {
   return sortPosts(posts);
 }
 
+export function getPostSortDate(post: PostEntry) {
+  return post.data.updated && post.data.updated > post.data.date ? post.data.updated : post.data.date;
+}
+
 export function sortPosts(posts: PostEntry[]) {
-  return posts.toSorted((left, right) => right.data.date.getTime() - left.data.date.getTime());
+  return posts.toSorted((left, right) => getPostSortDate(right).getTime() - getPostSortDate(left).getTime());
 }
 
-export async function getPostsByCategory(categoryName: string) {
+export async function getPostsByTag(tagName: string) {
   const posts = await getAllPosts();
-  return posts.filter((post) => post.data.category === categoryName);
+  return posts.filter((post) => post.data.tags.includes(tagName));
 }
 
-export async function getCategoriesWithPosts() {
+export async function getTagsWithPosts() {
   const posts = await getAllPosts();
   const buckets = new Map<string, PostEntry[]>();
 
   for (const post of posts) {
-    const bucket = buckets.get(post.data.category) ?? [];
-    bucket.push(post);
-    buckets.set(post.data.category, bucket);
+    for (const tag of new Set(post.data.tags)) {
+      const bucket = buckets.get(tag) ?? [];
+      bucket.push(post);
+      buckets.set(tag, bucket);
+    }
   }
 
   return [...buckets.entries()]
-    .map(([name, categoryPosts]) => ({
+    .map(([name, tagPosts]) => ({
       name,
-      slug: getCategorySlug(name),
-      posts: sortPosts(categoryPosts),
-      count: categoryPosts.length,
-      latestDate: sortPosts(categoryPosts)[0].data.date
+      slug: getTagSlug(name),
+      posts: sortPosts(tagPosts),
+      count: tagPosts.length,
+      latestDate: getPostSortDate(sortPosts(tagPosts)[0])
     }))
     .toSorted(
       (left, right) =>
@@ -50,15 +56,19 @@ export async function getCategoriesWithPosts() {
     );
 }
 
-export function getCategorySlug(category: string) {
-  const normalized = category
+export function getTagSlug(tag: string) {
+  const normalized = tag
     .trim()
     .toLowerCase()
     .normalize('NFKC')
     .replace(/[^\p{Letter}\p{Number}\s-]/gu, '')
     .replace(/\s+/g, '-');
 
-  return normalized || 'uncategorized';
+  return normalized || 'untagged';
+}
+
+export function getTagSearchUrl(tag: string) {
+  return `/search?q=${encodeURIComponent(`#${tag} `)}`;
 }
 
 export function stripMarkdown(source: string) {

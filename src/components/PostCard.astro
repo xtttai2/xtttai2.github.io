@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { formatDate } from '../lib/format';
-import { getCategorySlug, getPostSummary } from '../lib/posts';
+import { getPostSummary, getTagSearchUrl } from '../lib/posts';
 
 interface Props {
   post: CollectionEntry<'posts'>;
@@ -10,7 +10,9 @@ interface Props {
 
 const { post, variant = 'default' } = Astro.props;
 const postUrl = `/posts/${post.id}/`;
-const categoryUrl = `/categories/${getCategorySlug(post.data.category)}/`;
+const tags = post.data.tags.map((tag) => ({ name: tag, url: getTagSearchUrl(tag) }));
+const visibleTags = tags.slice(0, 3);
+const hasMoreTags = tags.length > visibleTags.length;
 const isHome = variant === 'home';
 const homeDate = post.data.updated ?? post.data.date;
 const homeDateLabel = post.data.updated ? '更新于' : '发布于';
@@ -23,7 +25,12 @@ const summary = getPostSummary(post);
       <a href={postUrl}>{post.data.title}</a>
     </h3>
     <div class="post-card-meta">
-      <a class="category-label post-card-category" href={categoryUrl}>{post.data.category}</a>
+      <div class="tag-list-inline post-card-tags">
+        {visibleTags.map((tag) => (
+          <a class="category-label post-card-category" href={tag.url}><span class="category-label-text">{tag.name}</span></a>
+        ))}
+        {hasMoreTags && <span class="tag-list-ellipsis">...</span>}
+      </div>
       {
         isHome ? (
           <span>

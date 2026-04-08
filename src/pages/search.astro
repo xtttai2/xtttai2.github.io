@@ -1,27 +1,38 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SearchForm from '../components/SearchForm.astro';
+import { getTagsWithPosts } from '../lib/posts';
 
-const query = Astro.url.searchParams.get('q') ?? '';
+const tags = await getTagsWithPosts();
+const tagNames = tags.map((tag) => tag.name);
 ---
 
-<BaseLayout title="搜索文章" description="搜索博客里的标题和正文内容。">
+<BaseLayout title="搜索文章" description="搜索并按标签筛选博客文章。">
   <section class="search-page">
     <article class="panel">
-      <SearchForm initialValue={query} />
+      <SearchForm />
+      <div class="search-tag-filter">
+        <div id="search-tag-filters" class="search-tag-scroll" aria-label="标签筛选"></div>
+      </div>
     </article>
 
     <div id="search-status" class="search-status"></div>
     <div id="search-results" class="search-results"></div>
   </section>
 
-  <script is:inline type="module" define:vars={{ initialQuery: query }}>
+  <script is:inline type="module" define:vars={{ availableTags: tagNames }}>
     const form = document.querySelector('[data-search-form]');
-    const input = document.querySelector('[data-search-input]');
+    const hiddenInput = document.querySelector('[data-search-input]');
+    const editor = document.querySelector('[data-search-editor]');
+    const control = document.querySelector('[data-search-control]');
+    const fakeCaret = document.querySelector('[data-search-caret]');
     const status = document.querySelector('#search-status');
     const results = document.querySelector('#search-results');
+    const tagFilters = document.querySelector('#search-tag-filters');
     let indexPromise;
     let debounceTimer;
+    const knownTags = Array.isArray(availableTags) ? availableTags : [];
+    const knownTagSet = new Set(knownTags);
 
     const escapeHtml = (value = '') =>
       value.replace(/[&<>"']/g, (char) => {
@@ -35,7 +46,238 @@ const query = Astro.url.searchParams.get('q') ?? '';
         return map[char];
       });
 
+    const tokenPattern = /(^|\s)#(\S+?)(?=\s|$)/g;
     const formatDate = (value) => value ? value.slice(0, 10) : '';
+    const isSearchEditorReady =
+      hiddenInput instanceof HTMLInputElement &&
+      editor instanceof HTMLElement &&
+      control instanceof HTMLElement;
+    const normalizeSearchValue = (value = '') => value.replace(/\r\n?/g, ' ').replace(/\u00a0/g, ' ');
+    const getSearchValue = () => (hiddenInput instanceof HTMLInputElement ? hiddenInput.value : '');
+    const syncSearchState = (value = getSearchValue()) => {
+      if (!(control instanceof HTMLElement)) {
+        return;
+      }
+
+      control.dataset.empty = value.length === 0 ? 'true' : 'false';
+    };
+
+    const placeCaretAtEnd = () => {
+      if (!(editor instanceof HTMLElement)) {
+        return;
+      }
+
+      const selection = window.getSelection();
+      if (!selection) {
+        return;
+      }
+
+      const range = document.createRange();
+      range.selectNodeContents(editor);
+      range.collapse(false);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    };
+
+    const placeCaretAtStart = () => {
+      if (!(editor instanceof HTMLElement)) {
+        return;
+      }
+
+      const selection = window.getSelection();
+      if (!selection) {
+        return;
+      }
+
+      const range = document.createRange();
+      range.selectNodeContents(editor);
+      range.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    };
+
+    const getEditorTextNodes = () => {
+      if (!(editor instanceof HTMLElement)) {
+        return [];
+      }
+
+      const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT);
+      const textNodes = [];
+      let currentNode = walker.nextNode();
+      while (currentNode) {
+        textNodes.push(currentNode);
+        currentNode = walker.nextNode();
+      }
+
+      if (textNodes.length === 0) {
+        const textNode = document.createTextNode('');
+        editor.append(textNode);
+        textNodes.push(textNode);
+      }
+
+      return textNodes;
+    };
+
+    const getSelectionOffsetWithinEditor = (selection) => {
+      if (!(editor instanceof HTMLElement) || selection.rangeCount === 0) {
+        return null;
+      }
+
+      const range = selection.getRangeAt(0).cloneRange();
+      range.selectNodeContents(editor);
+      range.setEnd(selection.anchorNode, selection.anchorOffset);
+      return range.toString().length;
+    };
+
+    const normalizeCollapsedSelection = () => {
+      if (!(editor instanceof HTMLElement)) {
+        return;
+      }
+
+      const selection = window.getSelection();
+      if (
+        !selection ||
+        !selection.isCollapsed ||
+        selection.rangeCount === 0 ||
+        !editor.contains(selection.anchorNode) ||
+        selection.anchorNode?.nodeType === Node.TEXT_NODE
+      ) {
+        return;
+      }
+
+      const absoluteOffset = getSelectionOffsetWithinEditor(selection);
+      if (absoluteOffset === null) {
+        return;
+      }
+
+      const textNodes = getEditorTextNodes();
+      let remainingOffset = absoluteOffset;
+      let targetNode = textNodes[textNodes.length - 1];
+      let targetOffset = targetNode.textContent?.length ?? 0;
+
+      for (const textNode of textNodes) {
+        const textLength = textNode.textContent?.length ?? 0;
+        if (remainingOffset <= textLength) {
+          targetNode = textNode;
+          targetOffset = remainingOffset;
+          break;
+        }
+
+        remainingOffset -= textLength;
+      }
+
+      const range = document.createRange();
+      range.setStart(targetNode, targetOffset);
+      range.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    };
+
+    const insertTextAtSelection = (text) => {
+      if (!(editor instanceof HTMLElement)) {
+        return;
+      }
+
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) {
+        editor.textContent = `${editor.textContent ?? ''}${text}`;
+        placeCaretAtEnd();
+        return;
+      }
+
+      const range = selection.getRangeAt(0);
+      range.deleteContents();
+      const textNode = document.createTextNode(text);
+      range.insertNode(textNode);
+      range.setStartAfter(textNode);
+      range.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    };
+
+    const updateFakeCaret = () => {
+      if (
+        !(control instanceof HTMLElement) ||
+        !(editor instanceof HTMLElement) ||
+        !(fakeCaret instanceof HTMLElement)
+      ) {
+        return;
+      }
+
+      const selection = window.getSelection();
+      const isActive = document.activeElement === editor;
+      if (
+        !isActive ||
+        !selection ||
+        selection.rangeCount === 0 ||
+        !selection.isCollapsed ||
+        !editor.contains(selection.anchorNode)
+      ) {
+        fakeCaret.style.display = 'none';
+        return;
+      }
+
+      const range = selection.getRangeAt(0).cloneRange();
+      range.collapse(true);
+
+      const controlRect = control.getBoundingClientRect();
+      const editorRect = editor.getBoundingClientRect();
+      const rects = range.getClientRects();
+      const rect = rects.length > 0 ? rects[0] : range.getBoundingClientRect();
+      const computedStyle = window.getComputedStyle(editor);
+      const lineHeight = parseFloat(computedStyle.lineHeight) || editorRect.height;
+
+      let left = editorRect.left - controlRect.left;
+      let top = editorRect.top - controlRect.top;
+      let height = lineHeight;
+
+      if (rect && (rect.width > 0 || rect.height > 0)) {
+        left = rect.left - controlRect.left;
+        height = Math.max(lineHeight, rect.height || 0);
+        top = rect.top - controlRect.top - Math.max((height - (rect.height || 0)) / 2, 0);
+      }
+
+      const caretHeight = Math.max(height - 4, height * 0.86);
+      top += Math.max((height - caretHeight) / 2, 0);
+
+      fakeCaret.style.height = `${caretHeight}px`;
+      fakeCaret.style.transform = `translate(${left}px, ${top}px)`;
+      fakeCaret.style.display = 'block';
+    };
+
+    const setSearchValue = (value, { moveCaretToEnd = false } = {}) => {
+      const normalizedValue = normalizeSearchValue(value);
+
+      if (hiddenInput instanceof HTMLInputElement) {
+        hiddenInput.value = normalizedValue;
+      }
+
+      if (editor instanceof HTMLElement && editor.textContent !== normalizedValue) {
+        editor.textContent = normalizedValue;
+      }
+
+      syncSearchState(normalizedValue);
+
+      if (moveCaretToEnd && editor instanceof HTMLElement) {
+        editor.focus();
+        placeCaretAtEnd();
+      }
+
+      updateFakeCaret();
+    };
+
+    const renderTagLinks = (tags = []) => {
+      const visibleTags = tags.slice(0, 3);
+      const ellipsis = tags.length > visibleTags.length ? '<span class="tag-list-ellipsis">...</span>' : '';
+      return (
+        visibleTags
+        .map(
+          (tag) =>
+            `<a class="category-label" href="/search?q=${encodeURIComponent(`#${tag.name} `)}"><span class="category-label-text">${escapeHtml(tag.name)}</span></a>`
+        )
+        .join('') + ellipsis
+      );
+    };
 
     const loadIndex = async () => {
       if (!indexPromise) {
@@ -44,12 +286,38 @@ const query = Astro.url.searchParams.get('q') ?? '';
       return indexPromise;
     };
 
+    const parseSearchQuery = (rawTerm) => {
+      const tags = [];
+      const seen = new Set();
+      const text = rawTerm
+        .replace(tokenPattern, (full, prefix, tag) => {
+          if (!knownTagSet.has(tag)) {
+            return full;
+          }
+
+          if (!seen.has(tag)) {
+            seen.add(tag);
+            tags.push(tag);
+          }
+
+          return prefix || ' ';
+        })
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      return { tags, text };
+    };
+
+    const buildSearchQuery = (tags, text) => {
+      const tokens = tags.map((tag) => `#${tag}`);
+      const normalizedText = text.trim();
+      return [...tokens, normalizedText].filter(Boolean).join(' ');
+    };
+
     const updateUrl = (term, push = false) => {
-      const params = new URLSearchParams(window.location.search);
+      const params = new URLSearchParams();
       if (term.trim()) {
         params.set('q', term.trim());
-      } else {
-        params.delete('q');
       }
 
       const nextUrl = `${window.location.pathname}${params.toString() ? `?${params}` : ''}`;
@@ -57,24 +325,55 @@ const query = Astro.url.searchParams.get('q') ?? '';
       window.history[method]({}, '', nextUrl);
     };
 
+    const renderTagFilters = () => {
+      if (!(tagFilters instanceof HTMLElement)) {
+        return;
+      }
+
+      const currentValue = getSearchValue();
+      const { tags: selectedTags } = parseSearchQuery(currentValue);
+      const selectedTagSet = new Set(selectedTags);
+      const buttons = knownTags.map((tag) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'search-tag-button';
+        button.textContent = tag;
+        button.dataset.tag = tag;
+        button.classList.toggle('is-active', selectedTagSet.has(tag));
+        button.addEventListener('click', async () => {
+          const parsed = parseSearchQuery(getSearchValue());
+          let nextTags = [...parsed.tags];
+          if (selectedTagSet.has(tag)) {
+            nextTags = nextTags.filter((value) => value !== tag);
+          } else {
+            nextTags.push(tag);
+          }
+
+          setSearchValue(buildSearchQuery(nextTags, parsed.text), { moveCaretToEnd: true });
+          renderTagFilters();
+          updateUrl(getSearchValue(), true);
+          await search(getSearchValue());
+        });
+        return button;
+      });
+
+      tagFilters.replaceChildren(...buttons);
+    };
+
     const renderMatches = (matches, term) => {
       if (!status || !results) {
         return;
       }
 
-      if (!term.trim()) {
-        status.textContent = '';
-        results.innerHTML = '';
-        return;
-      }
-
       if (matches.length === 0) {
-        status.textContent = `没有找到和“${term}”相关的文章。`;
+        status.textContent = '没有找到符合条件的文章。';
         results.innerHTML = '';
         return;
       }
 
-      status.textContent = `共找到 ${matches.length} 篇相关文章。`;
+      const { tags: selectedTags, text } = parseSearchQuery(term);
+      const hasFilters = text.trim() || selectedTags.length > 0;
+      status.textContent = hasFilters ? `共找到 ${matches.length} 篇相关文章。` : `共找到 ${matches.length} 篇文章。`;
       results.innerHTML = matches
         .map(
           (item) => `
@@ -82,7 +381,7 @@ const query = Astro.url.searchParams.get('q') ?? '';
               <div class="post-card-heading">
                 <h3 class="post-card-title"><a href="${escapeHtml(item.url)}">${escapeHtml(item.title)}</a></h3>
                 <div class="search-result-meta">
-                  <a class="category-label" href="/categories/${escapeHtml(item.categorySlug)}/">${escapeHtml(item.category)}</a>
+                  <div class="tag-list-inline search-result-tags">${renderTagLinks(item.tags)}</div>
                   <span>发布于 ${formatDate(item.date)}</span>
                   ${item.updated ? `<span>更新于 ${formatDate(item.updated)}</span>` : ''}
                 </div>
@@ -95,14 +394,9 @@ const query = Astro.url.searchParams.get('q') ?? '';
     };
 
     const search = async (term) => {
-      const normalized = term.trim().toLowerCase();
+      const { tags: selectedTags, text } = parseSearchQuery(term);
+      const normalized = text.trim().toLowerCase();
       const index = await loadIndex();
-
-      if (!normalized) {
-        renderMatches([], term);
-        return;
-      }
-
       const matches = index
         .map((item) => {
           let score = 0;
@@ -111,8 +405,20 @@ const query = Astro.url.searchParams.get('q') ?? '';
           if (item.content.toLowerCase().includes(normalized)) score += 1;
           return { item, score };
         })
-        .filter((entry) => entry.score > 0)
-        .sort((left, right) => right.score - left.score || right.item.date.localeCompare(left.item.date))
+        .filter((entry) => {
+          const matchesTerm = !normalized || entry.score > 0;
+          const matchesTags =
+            selectedTags.length === 0 ||
+            selectedTags.every((tag) => entry.item.tags.some((itemTag) => itemTag.name === tag));
+          return matchesTerm && matchesTags;
+        })
+        .sort((left, right) => {
+          if (!normalized) {
+            return right.item.sortDate.localeCompare(left.item.sortDate);
+          }
+
+          return right.score - left.score || right.item.sortDate.localeCompare(left.item.sortDate);
+        })
         .map((entry) => entry.item);
 
       renderMatches(matches, term);
@@ -120,13 +426,76 @@ const query = Astro.url.searchParams.get('q') ?? '';
 
     form?.addEventListener('submit', async (event) => {
       event.preventDefault();
-      const term = input instanceof HTMLInputElement ? input.value : '';
+      const term = getSearchValue();
       updateUrl(term, true);
       await search(term);
     });
 
-    input?.addEventListener('input', () => {
-      const term = input instanceof HTMLInputElement ? input.value : '';
+    control?.addEventListener('mousedown', (event) => {
+      if (!(editor instanceof HTMLElement) || !(event.target instanceof Node)) {
+        return;
+      }
+
+      if (editor.contains(event.target)) {
+        return;
+      }
+
+      event.preventDefault();
+      editor.focus();
+
+      const editorRect = editor.getBoundingClientRect();
+      if (event.clientX <= editorRect.left) {
+        placeCaretAtStart();
+      } else {
+        placeCaretAtEnd();
+      }
+
+      updateFakeCaret();
+    });
+
+    editor?.addEventListener('focus', () => {
+      if (control instanceof HTMLElement) {
+        control.dataset.focused = 'true';
+      }
+
+      normalizeCollapsedSelection();
+      updateFakeCaret();
+    });
+
+    editor?.addEventListener('blur', () => {
+      if (control instanceof HTMLElement) {
+        control.dataset.focused = 'false';
+      }
+
+      window.setTimeout(updateFakeCaret, 0);
+    });
+
+    editor?.addEventListener('beforeinput', (event) => {
+      if (event.inputType === 'insertParagraph' || event.inputType === 'insertLineBreak') {
+        event.preventDefault();
+      }
+    });
+
+    editor?.addEventListener('paste', (event) => {
+      event.preventDefault();
+      const pastedText = normalizeSearchValue(event.clipboardData?.getData('text/plain') ?? '');
+      if (!pastedText) {
+        return;
+      }
+
+      insertTextAtSelection(pastedText);
+      editor.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+
+    editor?.addEventListener('input', () => {
+      const term = normalizeSearchValue(editor.textContent ?? '');
+      if (hiddenInput instanceof HTMLInputElement) {
+        hiddenInput.value = term;
+      }
+
+      syncSearchState(term);
+      renderTagFilters();
+      updateFakeCaret();
       window.clearTimeout(debounceTimer);
       debounceTimer = window.setTimeout(async () => {
         updateUrl(term);
@@ -134,6 +503,34 @@ const query = Astro.url.searchParams.get('q') ?? '';
       }, 120);
     });
 
+    editor?.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Home' || event.key === 'End') {
+        normalizeCollapsedSelection();
+      }
+
+      if (event.key === 'Enter') {
+        event.preventDefault();
+      }
+    });
+
+    editor?.addEventListener('mouseup', () => {
+      window.setTimeout(() => {
+        normalizeCollapsedSelection();
+        updateFakeCaret();
+      }, 0);
+    });
+
+    document.addEventListener('selectionchange', () => {
+      normalizeCollapsedSelection();
+      updateFakeCaret();
+    });
+    window.addEventListener('resize', updateFakeCaret);
+
+    const initialQuery = new URLSearchParams(window.location.search).get('q') ?? '';
+    if (isSearchEditorReady) {
+      setSearchValue(initialQuery);
+    }
+    renderTagFilters();
     search(initialQuery);
   </script>
 </BaseLayout>

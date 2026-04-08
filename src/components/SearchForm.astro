@@ -5,6 +5,7 @@ interface Props {
 }
 
 const { initialValue = '', compact = false } = Astro.props;
+const isEmpty = initialValue.length === 0;
 ---
 
 <form
@@ -13,15 +14,26 @@ const { initialValue = '', compact = false } = Astro.props;
   method="get"
   data-search-form
 >
-  <label class="sr-only" for="search-input">搜索文章</label>
-  <input
-    id="search-input"
-    name="q"
-    type="search"
-    value={initialValue}
-    placeholder="搜索标题或正文内容"
-    autocomplete="off"
-    data-search-input
-  />
-  <button type="submit">搜索</button>
+  <span id="search-input-label" class="sr-only">搜索文章</span>
+  <div
+    class="search-form-control"
+    data-search-control
+    data-empty={isEmpty ? 'true' : 'false'}
+    data-focused="false"
+  >
+    <div
+      id="search-input"
+      class="search-form-editor"
+      contenteditable="plaintext-only"
+      role="textbox"
+      aria-labelledby="search-input-label"
+      aria-multiline="false"
+      spellcheck="false"
+      autocapitalize="off"
+      data-search-editor
+    >{initialValue}</div>
+    <span class="search-form-placeholder" aria-hidden="true" data-search-placeholder>搜索标题或正文内容</span>
+    <span class="search-form-fake-caret" aria-hidden="true" data-search-caret></span>
+  </div>
+  <input type="hidden" name="q" value={initialValue} data-search-input />
 </form>

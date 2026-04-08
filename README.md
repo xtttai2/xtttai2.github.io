@@ -14,9 +14,13 @@ title: title
 description: description # optional
 date: 2026-04-06
 updated: 2026-04-06 # optional
-category: category
+tags:
+  - tag1
+  - tag2
 ---
 ```
+
+首页和标签列表会按 `updated` 与 `date` 中较晚的那个时间倒序排序。
 
 ## 预览
 

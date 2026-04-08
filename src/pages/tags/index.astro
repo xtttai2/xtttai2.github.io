@@ -1,0 +1,15 @@
+---
+const target = '/search';
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>Redirecting...</title>
+  </head>
+  <body>
+    <script is:inline>window.location.replace('/search');</script>
+  </body>
+</html>
