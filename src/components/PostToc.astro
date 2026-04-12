@@ -14,10 +14,20 @@ interface TocItem {
 }
 
 const { headings } = Astro.props;
+const isFootnotesHeading = (heading: MarkdownHeading) => {
+  const normalizedText = heading.text.trim().toLowerCase();
+  const normalizedSlug = heading.slug.trim().toLowerCase();
+
+  return (
+    normalizedSlug === 'footnote-label' ||
+    normalizedSlug.startsWith('footnote-label-') ||
+    (normalizedText === 'footnotes' && normalizedSlug.includes('footnote'))
+  );
+};
 const items: TocItem[] = [];
 const stack: TocItem[] = [];
 
-for (const heading of headings.filter((entry) => entry.depth >= 1 && entry.depth <= 6)) {
+for (const heading of headings.filter((entry) => entry.depth >= 1 && entry.depth <= 6 && !isFootnotesHeading(entry))) {
   const item: TocItem = {
     id: heading.slug,
     text: heading.text,
