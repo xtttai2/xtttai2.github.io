@@ -2,7 +2,7 @@
 title: 容斥原理
 date: 2026-04-14
 tags:
-  - 容斥原理
+  - 组合计数
 ---
 
 经典图片：![](https://oi-wiki.org/math/combinatorics/images/incexcp.png)
